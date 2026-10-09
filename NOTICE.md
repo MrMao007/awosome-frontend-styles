@@ -1,6 +1,6 @@
 # Notice
 
-This repository contains an independently authored QoderWork skill and design-system summaries based on publicly accessible HyperFrames design reference pages.
+This repository contains an independently authored portable Agent Skills package and design-system summaries based on publicly accessible HyperFrames design reference pages.
 
 HyperFrames, its website, and the referenced template/style names are the property of their respective owners. This project is not affiliated with, sponsored by, or endorsed by HyperFrames.
 
