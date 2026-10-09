@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="NOVA AI Workbench connects research, creation, and automation in one focused AI workspace.">
+  <title>NOVA AI Workbench — Clear decisions, faster</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #E9E5DB;
+      --ink: #1B2566;
+      --sun: #F1EE2E;
+      --ember: #E26B4A;
+      --paper-deep: #DCD6C4;
+      --sun-soft: #F8F39B;
+      --haze: #F0DA7C;
+      --display: "Instrument Serif", serif;
+      --body: "Archivo", sans-serif;
+      --mono: "JetBrains Mono", monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--body);
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    body.modal-open { overflow: hidden; }
+    button, a { color: inherit; }
+    button { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    :focus-visible { outline: 3px solid var(--ink); outline-offset: 4px; }
+    a { text-decoration: none; }
+    [hidden] { display: none !important; }
+
+    .site-header {
+      position: absolute;
+      inset: 0 0 auto;
+      z-index: 20;
+      border-bottom: 1px solid var(--ink);
+    }
+    .nav-shell {
+      width: min(100% - 48px, 1400px);
+      min-height: 78px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 28px;
+    }
+    .brand {
+      font-family: var(--body);
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: .18em;
+    }
+    .nav-links { display: flex; align-items: center; gap: 34px; }
+    .nav-links a {
+      padding: 8px 0;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      border-bottom: 1px solid transparent;
+    }
+    .nav-links a:hover { border-color: var(--ink); }
+    .menu-toggle {
+      display: none;
+      min-width: 44px;
+      min-height: 44px;
+      padding: 0;
+      background: transparent;
+      border: 1px solid var(--ink);
+      cursor: pointer;
+    }
+    .menu-toggle span,
+    .menu-toggle::before,
+    .menu-toggle::after {
+      content: "";
+      display: block;
+      width: 20px;
+      height: 1px;
+      margin: 5px auto;
+      background: var(--ink);
+    }
+
+    main { overflow: clip; }
+    .hero {
+      position: relative;
+      min-height: 100svh;
+      padding: 158px max(24px, calc((100vw - 1400px) / 2 + 24px)) 64px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 270px;
+      gap: clamp(52px, 8vw, 140px);
+      align-items: end;
+      isolation: isolate;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      z-index: -2;
+      width: min(72vw, 1040px);
+      aspect-ratio: 1;
+      right: -10vw;
+      top: -24vw;
+      background: radial-gradient(circle, var(--sun) 0 19%, var(--sun-soft) 40%, var(--haze) 61%, transparent 73%);
+      opacity: .92;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      z-index: -3;
+      width: min(32vw, 460px);
+      aspect-ratio: 1;
+      right: 18vw;
+      bottom: -16vw;
+      background: radial-gradient(circle, rgba(226,107,74,.42), rgba(226,107,74,.13) 48%, transparent 70%);
+    }
+    .eyebrow, .section-index, .filter-label {
+      margin: 0;
+      font-family: var(--body);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+    .hero-copy { align-self: center; max-width: 980px; }
+    .hero h1 {
+      max-width: 980px;
+      margin: 24px 0 30px;
+      font-family: var(--display);
+      font-size: clamp(72px, 10.2vw, 158px);
+      font-weight: 400;
+      line-height: .86;
+      letter-spacing: -.018em;
+    }
+    .hero h1 em { font-weight: 400; }
+    .hero-subtitle { max-width: 610px; margin: 0; font-size: clamp(17px, 1.6vw, 22px); }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 36px; }
+    .btn {
+      min-height: 50px;
+      padding: 14px 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: 1px solid var(--ink);
+      border-radius: 0;
+      font-family: var(--body);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .btn-primary { background: var(--sun); }
+    .btn:hover { background: var(--sun-soft); }
+    .hero-rail {
+      min-height: 470px;
+      padding-left: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-left: 1px solid var(--ink);
+    }
+    .rail-year, .page-no {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: .08em;
+    }
+    .rail-note {
+      margin: 0;
+      font-family: var(--display);
+      font-size: 32px;
+      line-height: 1;
+      font-weight: 400;
+    }
+
+    .metrics {
+      background: var(--paper-deep);
+      border-top: 1px solid var(--ink);
+      border-bottom: 1px solid var(--ink);
+    }
+    .metrics-heading {
+      width: min(100% - 48px, 1400px);
+      margin: 0 auto;
+      padding: 54px 0 28px;
+      border-bottom: 1px solid var(--ink);
+    }
+    .metrics-heading h2 {
+      margin: 14px 0 0;
+      font-family: var(--display);
+      font-size: clamp(52px, 6vw, 86px);
+      font-weight: 400;
+      line-height: .86;
+      letter-spacing: -.018em;
+    }
+    .metrics-grid {
+      width: min(100% - 48px, 1400px);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .metric { min-height: 220px; padding: 34px 28px 32px; }
+    .metric + .metric { border-left: 1px solid var(--ink); }
+    .metric-value {
+      display: block;
+      font-family: var(--display);
+      font-size: clamp(62px, 7vw, 104px);
+      font-weight: 400;
+      line-height: .9;
+    }
+    .metric-label { margin: 26px 0 0; font-size: 13px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+
+    .capabilities { padding: clamp(82px, 10vw, 150px) max(24px, calc((100vw - 1400px) / 2 + 24px)); }
+    .section-heading {
+      display: grid;
+      grid-template-columns: 150px minmax(0, 1fr);
+      gap: clamp(30px, 7vw, 110px);
+      align-items: start;
+      margin-bottom: 64px;
+    }
+    .section-heading h2 {
+      max-width: 900px;
+      margin: 0;
+      font-family: var(--display);
+      font-size: clamp(62px, 8vw, 120px);
+      font-weight: 400;
+      line-height: .86;
+      letter-spacing: -.018em;
+    }
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      border-top: 1px solid var(--ink);
+      border-bottom: 1px solid var(--ink);
+    }
+    .filter-btn {
+      min-height: 54px;
+      padding: 14px 24px;
+      background: transparent;
+      border: 0;
+      border-right: 1px solid var(--ink);
+      border-radius: 0;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .filter-btn[aria-pressed="true"] { background: var(--sun); }
+    .filter-btn:hover { background: var(--sun-soft); }
+    .feature-list { border-bottom: 1px solid var(--ink); }
+    .feature-card {
+      display: grid;
+      grid-template-columns: 90px minmax(220px, .75fr) minmax(280px, 1fr) 45px;
+      gap: 24px;
+      align-items: center;
+      min-height: 112px;
+      padding: 24px 0;
+      border-top: 1px solid var(--ink);
+    }
+    .feature-type { font-family: var(--body); font-size: 11px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; }
+    .feature-no { font-family: var(--mono); font-size: 11px; text-align: right; }
+    .feature-card h3 { margin: 0; font-family: var(--display); font-size: clamp(34px, 3.5vw, 54px); font-weight: 400; line-height: 1; }
+    .feature-card p { margin: 0; font-size: 15px; }
+
+    .impact {
+      position: relative;
+      padding: clamp(78px, 9vw, 126px) max(24px, calc((100vw - 1400px) / 2 + 24px));
+      background: var(--sun);
+      border-top: 1px solid var(--ink);
+      border-bottom: 1px solid var(--ink);
+      overflow: hidden;
+    }
+    .impact::after {
+      content: "";
+      position: absolute;
+      width: 420px;
+      aspect-ratio: 1;
+      right: -110px;
+      bottom: -180px;
+      background: radial-gradient(circle, rgba(226,107,74,.48), rgba(226,107,74,.1) 52%, transparent 70%);
+    }
+    .impact-inner { position: relative; z-index: 1; display: grid; grid-template-columns: .7fr 1.3fr; gap: clamp(40px, 9vw, 140px); }
+    .impact h2 { margin: 18px 0 0; font-family: var(--display); font-size: clamp(64px, 8vw, 116px); font-weight: 400; line-height: .86; letter-spacing: -.018em; }
+    .impact-summary { max-width: 420px; margin: 28px 0 0; }
+    .chart {
+      min-height: 430px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: clamp(12px, 2vw, 28px);
+      align-items: end;
+      padding-top: 36px;
+      border-top: 1px solid var(--ink);
+    }
+    .chart-item { min-width: 0; }
+    .chart-value { display: block; margin-bottom: 10px; font-family: var(--mono); font-size: 13px; }
+    .chart-bar { height: calc(var(--value) * 3px); max-height: 288px; background: var(--ink); }
+    .chart-label { display: block; padding-top: 12px; border-top: 1px solid var(--ink); font-family: var(--mono); font-size: 10px; }
+
+    .final-cta {
+      padding: clamp(100px, 13vw, 190px) 24px 52px;
+      text-align: center;
+    }
+    .final-cta h2 {
+      max-width: 1000px;
+      margin: 0 auto 40px;
+      font-family: var(--display);
+      font-size: clamp(66px, 9vw, 132px);
+      font-weight: 400;
+      line-height: .86;
+      letter-spacing: -.018em;
+    }
+    .final-cta .btn { background: var(--sun); }
+    .final-cta .btn:hover { background: var(--sun-soft); }
+    .site-footer {
+      width: min(100% - 48px, 1400px);
+      margin: 0 auto;
+      padding: 26px 0;
+      border-top: 1px solid var(--ink);
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+      font-size: 11px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: rgba(27,37,102,.36);
+    }
+    .modal {
+      width: min(100%, 650px);
+      padding: 34px;
+      background: var(--paper);
+      border: 1px solid var(--ink);
+    }
+    .modal-top { display: flex; justify-content: space-between; gap: 24px; align-items: start; }
+    .modal h2 { margin: 16px 0 18px; font-family: var(--display); font-size: clamp(50px, 7vw, 78px); font-weight: 400; line-height: .9; }
+    .modal p { max-width: 480px; margin: 0; }
+    .modal-close {
+      flex: 0 0 44px;
+      width: 44px;
+      height: 44px;
+      background: var(--sun);
+      border: 1px solid var(--ink);
+      border-radius: 0;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 760px) {
+      .site-header { position: absolute; }
+      .nav-shell { width: calc(100% - 32px); min-height: 68px; }
+      .menu-toggle { display: block; }
+      .nav-links {
+        position: absolute;
+        top: 68px;
+        left: 0;
+        right: 0;
+        display: none;
+        padding: 18px 16px 22px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 2px;
+        background: var(--paper);
+        border-bottom: 1px solid var(--ink);
+      }
+      .nav-links.is-open { display: flex; }
+      .nav-links a { min-height: 44px; display: flex; align-items: center; }
+      .hero { min-height: auto; padding: 126px 20px 62px; grid-template-columns: 1fr; gap: 54px; }
+      .hero::before { width: 118vw; right: -52vw; top: -12vw; }
+      .hero h1 { font-size: clamp(64px, 20vw, 92px); }
+      .hero-rail { min-height: 120px; padding: 18px 0 0; border-left: 0; border-top: 1px solid var(--ink); flex-direction: row; align-items: flex-start; }
+      .rail-note { max-width: 200px; font-size: 27px; text-align: right; }
+      .metrics-grid { width: calc(100% - 40px); grid-template-columns: 1fr; }
+      .metric { min-height: 160px; padding: 28px 0; }
+      .metric + .metric { border-left: 0; border-top: 1px solid var(--ink); }
+      .section-heading { grid-template-columns: 1fr; gap: 22px; margin-bottom: 42px; }
+      .section-heading h2, .impact h2, .final-cta h2 { font-size: clamp(58px, 17vw, 84px); }
+      .capabilities { padding: 78px 20px; }
+      .filters { display: grid; grid-template-columns: repeat(2, 1fr); }
+      .filter-btn { border-bottom: 1px solid var(--ink); }
+      .filter-btn:nth-child(2n) { border-right: 0; }
+      .filter-btn:nth-last-child(-n+2) { border-bottom: 0; }
+      .feature-card { grid-template-columns: 58px 1fr 32px; gap: 12px; padding: 24px 0; }
+      .feature-card p { grid-column: 2 / 4; font-size: 14px; }
+      .feature-card h3 { font-size: 38px; }
+      .impact { padding: 78px 20px; }
+      .impact-inner { grid-template-columns: 1fr; }
+      .chart { min-height: 330px; gap: 8px; }
+      .chart-bar { height: calc(var(--value) * 2px); }
+      .chart-label { writing-mode: vertical-rl; padding: 10px 0 0; border-top: 0; font-size: 9px; }
+      .final-cta { padding: 96px 20px 40px; }
+      .site-footer { width: calc(100% - 40px); flex-direction: column; }
+      .modal { padding: 24px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav-shell" aria-label="Primary navigation">
+      <a class="brand" href="#product" aria-label="NOVA AI home">NOVA AI</a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-links" aria-label="Open navigation menu"><span></span></button>
+      <div class="nav-links" id="primary-links">
+        <a href="#product">Product</a>
+        <a href="#capabilities">Capabilities</a>
+        <a href="#impact">Impact</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="product" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow">AI OPERATIONS · 2026</p>
+        <h1 id="hero-title">Turn scattered work into <em>clear decisions.</em></h1>
+        <p class="hero-subtitle">NOVA connects research, creation, and automation in one focused AI workspace.</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary js-open-modal" type="button">Start building</button>
+          <a class="btn" href="#capabilities">Explore capabilities</a>
+        </div>
+      </div>
+      <div class="hero-rail" aria-hidden="true"></div>
+    </section>
+
+    <section class="metrics" aria-labelledby="metrics-title">
+      <header class="metrics-heading"><p class="eyebrow">THE NUMBERS</p><h2 id="metrics-title">Work, amplified.</h2></header>
+      <div class="metrics-grid">
+        <article class="metric"><span class="metric-value">87%</span><p class="metric-label">Faster synthesis</p></article>
+        <article class="metric"><span class="metric-value">4.2×</span><p class="metric-label">More output</p></article>
+        <article class="metric"><span class="metric-value">12h</span><p class="metric-label">Saved weekly</p></article>
+      </div>
+    </section>
+
+    <section class="capabilities" id="capabilities" aria-labelledby="capabilities-title">
+      <div class="section-heading">
+        <p class="section-index">NOVA MODES</p>
+        <h2 id="capabilities-title">One workspace. <em>Three modes.</em></h2>
+      </div>
+      <div class="filters" aria-label="Filter capabilities">
+        <button class="filter-btn" type="button" data-filter="all" aria-pressed="true">All</button>
+        <button class="filter-btn" type="button" data-filter="research" aria-pressed="false">Research</button>
+        <button class="filter-btn" type="button" data-filter="create" aria-pressed="false">Create</button>
+        <button class="filter-btn" type="button" data-filter="automate" aria-pressed="false">Automate</button>
+      </div>
+      <div class="feature-list" aria-live="polite">
+        <article class="feature-card" data-category="research"><span class="feature-type">Research</span><h3>Deep research</h3><p>Turn broad questions into structured, source-backed findings.</p><span class="feature-no">01</span></article>
+        <article class="feature-card" data-category="research"><span class="feature-type">Research</span><h3>Source map</h3><p>Trace evidence, themes, and gaps across every useful source.</p><span class="feature-no">02</span></article>
+        <article class="feature-card" data-category="create"><span class="feature-type">Create</span><h3>Campaign studio</h3><p>Shape one brief into coordinated ideas, assets, and messages.</p><span class="feature-no">03</span></article>
+        <article class="feature-card" data-category="create"><span class="feature-type">Create</span><h3>Draft copilot</h3><p>Move from rough thinking to crisp, audience-ready drafts.</p><span class="feature-no">04</span></article>
+        <article class="feature-card" data-category="automate"><span class="feature-type">Automate</span><h3>Workflow builder</h3><p>Connect repeatable steps into dependable no-code workflows.</p><span class="feature-no">05</span></article>
+        <article class="feature-card" data-category="automate"><span class="feature-type">Automate</span><h3>Review agent</h3><p>Check every deliverable against rules before it moves forward.</p><span class="feature-no">06</span></article>
+      </div>
+    </section>
+
+    <section class="impact" id="impact" aria-labelledby="impact-title">
+      <div class="impact-inner">
+        <div><p class="section-index">LIVE SIGNAL</p><h2 id="impact-title">Weekly impact</h2><p class="impact-summary">Teams build momentum as connected work compounds through the week.</p></div>
+        <div class="chart" role="img" aria-label="Weekly impact chart: Monday 42, Tuesday 68, Wednesday 84, Thursday 96">
+          <div class="chart-item" style="--value:42"><span class="chart-value">42</span><div class="chart-bar" aria-hidden="true"></div><span class="chart-label">Monday</span></div>
+          <div class="chart-item" style="--value:68"><span class="chart-value">68</span><div class="chart-bar" aria-hidden="true"></div><span class="chart-label">Tuesday</span></div>
+          <div class="chart-item" style="--value:84"><span class="chart-value">84</span><div class="chart-bar" aria-hidden="true"></div><span class="chart-label">Wednesday</span></div>
+          <div class="chart-item" style="--value:96"><span class="chart-value">96</span><div class="chart-bar" aria-hidden="true"></div><span class="chart-label">Thursday</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="final-cta" aria-labelledby="final-title">
+      <p class="eyebrow">YOUR NEXT MOVE</p>
+      <h2 id="final-title">Build the workbench your team needs.</h2>
+      <button class="btn js-open-modal" type="button">Ready to move from prompt to progress?</button>
+    </section>
+  </main>
+
+  <footer class="site-footer"><span>NOVA AI Workbench</span><span>Research · Create · Automate</span></footer>
+
+  <div class="modal-backdrop" id="start-modal" hidden>
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-description">
+      <div class="modal-top">
+        <h2 id="modal-title">Start with NOVA.</h2>
+        <button class="modal-close" type="button" aria-label="Close dialog">×</button>
+      </div>
+      <p id="modal-description">Your focused AI workspace is ready for research, creation, and automation.</p>
+    </section>
+  </div>
+
+  <script>
+    (() => {
+      const menuButton = document.querySelector('.menu-toggle');
+      const navLinks = document.querySelector('.nav-links');
+      const closeMenu = () => {
+        navLinks.classList.remove('is-open');
+        menuButton.setAttribute('aria-expanded', 'false');
+        menuButton.setAttribute('aria-label', 'Open navigation menu');
+      };
+      menuButton.addEventListener('click', () => {
+        const isOpen = menuButton.getAttribute('aria-expanded') === 'true';
+        menuButton.setAttribute('aria-expanded', String(!isOpen));
+        menuButton.setAttribute('aria-label', isOpen ? 'Open navigation menu' : 'Close navigation menu');
+        navLinks.classList.toggle('is-open', !isOpen);
+      });
+      navLinks.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
+
+      const filters = document.querySelectorAll('.filter-btn');
+      const cards = document.querySelectorAll('.feature-card');
+      filters.forEach(button => button.addEventListener('click', () => {
+        const selected = button.dataset.filter;
+        filters.forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+        cards.forEach(card => { card.hidden = selected !== 'all' && card.dataset.category !== selected; });
+      }));
+
+      const modal = document.getElementById('start-modal');
+      const closeButton = modal.querySelector('.modal-close');
+      const openButtons = document.querySelectorAll('.js-open-modal');
+      let lastTrigger = null;
+      const openModal = trigger => {
+        lastTrigger = trigger;
+        modal.hidden = false;
+        document.body.classList.add('modal-open');
+        closeButton.focus();
+      };
+      const closeModal = () => {
+        modal.hidden = true;
+        document.body.classList.remove('modal-open');
+        if (lastTrigger) lastTrigger.focus();
+      };
+      openButtons.forEach(button => button.addEventListener('click', () => openModal(button)));
+      closeButton.addEventListener('click', closeModal);
+      modal.addEventListener('click', event => { if (event.target === modal) closeModal(); });
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && !modal.hidden) closeModal();
+        if (event.key === 'Tab' && !modal.hidden) {
+          event.preventDefault();
+          closeButton.focus();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

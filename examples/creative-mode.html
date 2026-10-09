@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="NOVA AI Workbench connects research, creation, and automation in one focused AI workspace.">
+  <title>NOVA AI Workbench — Clear decisions, faster</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream: #EFE9D9;
+      --cream-2: #E4DCC4;
+      --ink: #0F0F0F;
+      --ink-2: #2A2A2A;
+      --green: #1F8A4C;
+      --green-dark: #136636;
+      --pink: #F06CA8;
+      --pink-dark: #D14E8B;
+      --orange: #E85A1F;
+      --yellow: #F5C518;
+      --border: 4px solid var(--ink);
+      --page: min(1180px, calc(100% - 48px));
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      overflow-x: hidden;
+      color: var(--ink);
+      background: var(--cream);
+      font-family: "Space Grotesk", sans-serif;
+      line-height: 1.5;
+    }
+    body.modal-open { overflow: hidden; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { font: inherit; }
+    a { color: inherit; }
+    :focus-visible {
+      outline: 4px solid var(--yellow);
+      outline-offset: 4px;
+    }
+    .skip-link {
+      position: fixed;
+      z-index: 1000;
+      top: 8px;
+      left: 8px;
+      padding: 10px 14px;
+      color: var(--cream);
+      background: var(--ink);
+      transform: translateY(-160%);
+    }
+    .skip-link:focus { transform: translateY(0); }
+    .shell { width: var(--page); margin-inline: auto; }
+
+    .site-header {
+      position: relative;
+      z-index: 20;
+      padding: 22px 0;
+      background: var(--cream);
+    }
+    .topbar {
+      min-height: 62px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 28px;
+      padding: 10px 14px 10px 22px;
+      border: var(--border);
+      border-radius: 999px;
+      background: var(--cream);
+    }
+    .brand {
+      font-family: "Archivo Black", sans-serif;
+      font-size: 1.25rem;
+      line-height: 1;
+      letter-spacing: -0.01em;
+      text-decoration: none;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .desktop-nav { display: flex; align-items: center; gap: 30px; }
+    .desktop-nav a {
+      font-weight: 700;
+      text-decoration-thickness: 3px;
+      text-underline-offset: 5px;
+    }
+    .desktop-nav a:hover { text-decoration-color: var(--pink); }
+    .menu-toggle {
+      display: none;
+      border: 0;
+      padding: 8px 12px;
+      color: var(--cream);
+      background: var(--ink);
+      font-family: "JetBrains Mono", monospace;
+      font-size: .82rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .mobile-nav {
+      display: none;
+      margin-top: -4px;
+      border: var(--border);
+      border-top: 0;
+      background: var(--yellow);
+    }
+    .mobile-nav[data-open="true"] { display: grid; }
+    .mobile-nav a {
+      padding: 15px 20px;
+      border-top: 2px solid var(--ink);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .hero { padding: 66px 0 104px; }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(260px, .65fr);
+      gap: 60px;
+      align-items: end;
+    }
+    .eyebrow,
+    .section-kicker {
+      display: inline-block;
+      margin: 0 0 24px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: clamp(.8rem, 1.2vw, 1rem);
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .eyebrow {
+      padding: 8px 12px;
+      border: var(--border);
+      background: var(--yellow);
+      transform: rotate(-1.5deg);
+    }
+    h1, h2, h3, .metric-value {
+      margin: 0;
+      font-family: "Archivo Black", sans-serif;
+      line-height: .92;
+      letter-spacing: -.01em;
+      text-transform: uppercase;
+    }
+    h1 {
+      max-width: 10ch;
+      font-size: clamp(3.3rem, 8.4vw, 7.6rem);
+      overflow-wrap: anywhere;
+    }
+    .hero-card {
+      position: relative;
+      padding: 28px;
+      border: var(--border);
+      background: var(--pink);
+      box-shadow: 24px 24px 0 var(--orange);
+    }
+    .hero-copy {
+      margin: 0;
+      color: var(--ink-2);
+      font-size: clamp(1.15rem, 2vw, 1.75rem);
+      line-height: 1.4;
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 30px; }
+    .button {
+      min-height: 54px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 13px 18px;
+      border: var(--border);
+      color: var(--ink);
+      background: var(--yellow);
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .button:hover { background: var(--cream); }
+    .button-secondary { background: var(--cream); }
+
+    .metrics-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 32px;
+      margin-bottom: 36px;
+    }
+    .metrics-head h2 { max-width: 8ch; }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: var(--border);
+      border-left: var(--border);
+    }
+    .metric {
+      min-height: 238px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 28px;
+      border-right: var(--border);
+      border-bottom: var(--border);
+    }
+    .metric:nth-child(1) { background: var(--yellow); }
+    .metric:nth-child(2) { background: var(--pink); }
+    .metric:nth-child(3) { background: var(--green); }
+    .metric-index {
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 700;
+      letter-spacing: .14em;
+    }
+    .metric-value { font-size: clamp(3rem, 6vw, 6rem); }
+    .metric-label { margin-top: 12px; font-weight: 800; text-transform: uppercase; }
+
+    .capabilities { padding: 112px 0; }
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 40px;
+      align-items: end;
+      margin-bottom: 40px;
+    }
+    h2 { max-width: 10ch; font-size: clamp(3rem, 7vw, 6rem); }
+    .section-kicker { margin-bottom: 12px; }
+    .filters { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+    .filter-button {
+      padding: 10px 13px;
+      border: var(--border);
+      background: var(--cream-2);
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 700;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .filter-button[aria-pressed="true"] { color: var(--cream); background: var(--ink); }
+    .filter-button:hover { background: var(--yellow); color: var(--ink); }
+    .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: var(--border); border-left: var(--border); }
+    .feature-card {
+      min-height: 256px;
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+      border-right: var(--border);
+      border-bottom: var(--border);
+      background: var(--cream-2);
+    }
+    .feature-card[data-category="Research"] { background: var(--yellow); }
+    .feature-card[data-category="Create"] { background: var(--pink); }
+    .feature-card[data-category="Automate"] { background: var(--green); }
+    .feature-card[hidden] { display: none; }
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: auto;
+      font-family: "JetBrains Mono", monospace;
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    h3 { margin-top: 46px; font-size: clamp(1.65rem, 3vw, 2.55rem); }
+    .feature-card p { margin: 16px 0 0; color: var(--ink-2); font-weight: 600; }
+
+    .impact { padding: 0 0 112px; }
+    .impact-frame {
+      display: grid;
+      grid-template-columns: .56fr 1.44fr;
+      border: var(--border);
+      background: var(--cream-2);
+    }
+    .impact-copy { padding: 34px; border-right: var(--border); }
+    .impact-copy h2 { font-size: clamp(2.8rem, 5vw, 5.4rem); }
+    .impact-copy p { margin: 28px 0 0; font-size: 1.15rem; }
+    .chart {
+      min-height: 470px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(64px, 1fr));
+      align-items: end;
+      gap: 20px;
+      padding: 42px 38px 32px;
+      background: var(--green);
+    }
+    .bar-item { min-width: 0; text-align: center; }
+    .bar-value {
+      display: inline-block;
+      margin-bottom: 8px;
+      padding: 3px 7px;
+      border: 2px solid var(--ink);
+      background: var(--cream);
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 700;
+    }
+    .bar {
+      width: 100%;
+      height: calc(var(--value) * 3.2px);
+      min-height: 24px;
+      border: var(--border);
+      border-bottom: 0;
+      background: var(--pink);
+    }
+    .bar-item:nth-child(even) .bar { background: var(--yellow); }
+    .bar-label {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 3px 0;
+      border-top: var(--border);
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .closing {
+      padding: 96px 0;
+      border-top: var(--border);
+      background: var(--green);
+    }
+    .closing-grid { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 40px; }
+    .closing .section-kicker { padding: 7px 10px; border: var(--border); background: var(--pink); }
+    .closing h2 { max-width: 12ch; }
+    .closing-button {
+      max-width: 320px;
+      min-height: 180px;
+      padding: 24px;
+      border: var(--border);
+      background: var(--yellow);
+      box-shadow: 24px 24px 0 var(--pink);
+      font-family: "Archivo Black", sans-serif;
+      font-size: clamp(1.35rem, 2.5vw, 2.2rem);
+      line-height: 1;
+      text-align: left;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .closing-button:hover { background: var(--cream); }
+    .site-footer {
+      padding: 22px 0;
+      color: var(--cream);
+      background: var(--ink);
+      font-family: "JetBrains Mono", monospace;
+      font-size: .78rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .footer-row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+    .modal[hidden] { display: none; }
+    .modal {
+      position: fixed;
+      z-index: 100;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: rgba(15, 15, 15, .78);
+    }
+    .modal-dialog {
+      width: min(560px, 100%);
+      padding: 28px;
+      border: var(--border);
+      background: var(--cream);
+      box-shadow: 24px 24px 0 var(--orange);
+    }
+    .modal-top { display: flex; align-items: start; justify-content: space-between; gap: 24px; }
+    .modal-dialog h2 { max-width: 8ch; font-size: clamp(2.4rem, 8vw, 4.5rem); }
+    .modal-dialog p { margin: 24px 0 0; color: var(--ink-2); font-size: 1.1rem; }
+    .modal-close {
+      flex: 0 0 auto;
+      width: 48px;
+      height: 48px;
+      border: var(--border);
+      background: var(--pink);
+      font-size: 1.6rem;
+      font-weight: 900;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid { grid-template-columns: 1fr; align-items: start; }
+      .hero-card { max-width: calc(100% - 24px); }
+      .section-head { display: block; }
+      .filters { justify-content: flex-start; margin-top: 26px; }
+      .card-grid { grid-template-columns: repeat(2, 1fr); }
+      .impact-frame { grid-template-columns: 1fr; }
+      .impact-copy { border-right: 0; border-bottom: var(--border); }
+      .closing-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 760px) {
+      :root { --page: min(100% - 28px, 1180px); }
+      html { scroll-behavior: auto; }
+      .site-header { padding: 14px 0; }
+      .topbar { min-height: 54px; padding: 8px 9px 8px 16px; }
+      .desktop-nav { display: none; }
+      .menu-toggle { display: block; }
+      .hero { padding: 48px 0 76px; }
+      .hero-grid { gap: 38px; }
+      h1 { font-size: clamp(3rem, 15vw, 5rem); }
+      .hero-card { padding: 22px; box-shadow: 14px 14px 0 var(--orange); }
+      .hero-card::before { margin-bottom: 28px; }
+      .hero-actions { align-items: stretch; flex-direction: column; }
+      .button { width: 100%; }
+      .metrics { grid-template-columns: 1fr; }
+      .metric { min-height: 190px; }
+      .capabilities { padding: 78px 0; }
+      .card-grid { grid-template-columns: 1fr; }
+      .feature-card { min-height: 220px; }
+      .impact { padding-bottom: 78px; }
+      .impact-copy { padding: 26px 22px; }
+      .chart { min-height: 370px; gap: 8px; padding: 32px 10px 20px; background-image: none; }
+      .bar { height: calc(var(--value) * 2.35px); }
+      .bar-label { font-size: .73rem; }
+      .closing { padding: 74px 0 88px; }
+      .closing-button { min-height: 142px; box-shadow: 14px 14px 0 var(--pink); }
+      .modal-dialog { padding: 22px; box-shadow: 12px 12px 0 var(--orange); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="shell">
+      <div class="topbar">
+        <a class="brand" href="#main" aria-label="NOVA AI home">NOVA AI</a>
+        <nav class="desktop-nav" aria-label="Primary navigation">
+          <a href="#product">Product</a>
+          <a href="#capabilities">Capabilities</a>
+          <a href="#impact">Impact</a>
+        </nav>
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-navigation">Menu</button>
+      </div>
+      <nav class="mobile-nav" id="mobile-navigation" aria-label="Mobile navigation" data-open="false">
+        <a href="#product">Product</a>
+        <a href="#capabilities">Capabilities</a>
+        <a href="#impact">Impact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="product" aria-labelledby="hero-title">
+      <div class="shell hero-grid">
+        <div>
+          <p class="eyebrow">AI OPERATIONS · 2026</p>
+          <h1 id="hero-title">Turn scattered work into clear decisions.</h1>
+        </div>
+        <div class="hero-card">
+          <p class="hero-copy">NOVA connects research, creation, and automation in one focused AI workspace.</p>
+          <div class="hero-actions">
+            <button class="button js-open-modal" type="button">Start building</button>
+            <a class="button button-secondary" href="#capabilities">Explore capabilities</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="shell" aria-labelledby="metrics-title">
+      <div class="metrics-head">
+        <div><p class="section-kicker">THE NUMBERS</p><h2 id="metrics-title">Work, amplified.</h2></div>
+      </div>
+      <div class="metrics">
+        <article class="metric">
+          <div><p class="metric-value">87%</p><p class="metric-label">Faster synthesis</p></div>
+        </article>
+        <article class="metric">
+          <div><p class="metric-value">4.2×</p><p class="metric-label">More output</p></div>
+        </article>
+        <article class="metric">
+          <div><p class="metric-value">12h</p><p class="metric-label">Saved weekly</p></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="capabilities" id="capabilities" aria-labelledby="capabilities-title">
+      <div class="shell">
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">NOVA MODES</p>
+            <h2 id="capabilities-title">One workspace. Three modes.</h2>
+          </div>
+          <div class="filters" role="group" aria-label="Filter capabilities">
+            <button class="filter-button" type="button" data-filter="All" aria-pressed="true">All</button>
+            <button class="filter-button" type="button" data-filter="Research" aria-pressed="false">Research</button>
+            <button class="filter-button" type="button" data-filter="Create" aria-pressed="false">Create</button>
+            <button class="filter-button" type="button" data-filter="Automate" aria-pressed="false">Automate</button>
+          </div>
+        </div>
+
+        <div class="card-grid" aria-live="polite">
+          <article class="feature-card" data-category="Research">
+            <div class="card-meta"><span>Research</span><span>01</span></div>
+            <h3>Deep research</h3>
+            <p>Turn broad questions into structured, source-backed findings.</p>
+          </article>
+          <article class="feature-card" data-category="Research">
+            <div class="card-meta"><span>Research</span><span>02</span></div>
+            <h3>Source map</h3>
+            <p>Trace evidence, themes, and gaps across every useful source.</p>
+          </article>
+          <article class="feature-card" data-category="Create">
+            <div class="card-meta"><span>Create</span><span>03</span></div>
+            <h3>Campaign studio</h3>
+            <p>Shape one brief into coordinated ideas, assets, and messages.</p>
+          </article>
+          <article class="feature-card" data-category="Create">
+            <div class="card-meta"><span>Create</span><span>04</span></div>
+            <h3>Draft copilot</h3>
+            <p>Move from rough thinking to crisp, audience-ready drafts.</p>
+          </article>
+          <article class="feature-card" data-category="Automate">
+            <div class="card-meta"><span>Automate</span><span>05</span></div>
+            <h3>Workflow builder</h3>
+            <p>Connect repeatable steps into dependable no-code workflows.</p>
+          </article>
+          <article class="feature-card" data-category="Automate">
+            <div class="card-meta"><span>Automate</span><span>06</span></div>
+            <h3>Review agent</h3>
+            <p>Check every deliverable against rules before it moves forward.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="impact shell" id="impact" aria-labelledby="impact-title">
+      <div class="impact-frame">
+        <div class="impact-copy">
+          <p class="section-kicker">LIVE SIGNAL</p>
+          <h2 id="impact-title">Weekly impact</h2>
+          <p>Teams build momentum as connected work compounds through the week.</p>
+        </div>
+        <div class="chart" role="img" aria-label="Weekly impact bar chart: Monday 42, Tuesday 68, Wednesday 84, Thursday 96">
+          <div class="bar-item"><span class="bar-value">42</span><div class="bar" style="--value:42"></div><div class="bar-label">Monday</div></div>
+          <div class="bar-item"><span class="bar-value">68</span><div class="bar" style="--value:68"></div><div class="bar-label">Tuesday</div></div>
+          <div class="bar-item"><span class="bar-value">84</span><div class="bar" style="--value:84"></div><div class="bar-label">Wednesday</div></div>
+          <div class="bar-item"><span class="bar-value">96</span><div class="bar" style="--value:96"></div><div class="bar-label">Thursday</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="closing" aria-labelledby="closing-title">
+      <div class="shell closing-grid">
+        <div>
+          <p class="section-kicker">YOUR NEXT MOVE</p>
+          <h2 id="closing-title">Build the workbench your team needs.</h2>
+        </div>
+        <button class="closing-button js-open-modal" type="button">Ready to move from prompt to progress?</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell footer-row"><span>NOVA AI Workbench</span><span>Research · Create · Automate</span></div>
+  </footer>
+
+  <div class="modal" id="start-modal" hidden>
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-description">
+      <div class="modal-top">
+        <h2 id="modal-title">Start with NOVA.</h2>
+        <button class="modal-close" type="button" aria-label="Close dialog">×</button>
+      </div>
+      <p id="modal-description">Your focused AI workspace is ready for research, creation, and automation.</p>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      const menuButton = document.querySelector('.menu-toggle');
+      const mobileNav = document.querySelector('.mobile-nav');
+      const filterButtons = [...document.querySelectorAll('.filter-button')];
+      const cards = [...document.querySelectorAll('.feature-card')];
+      const modal = document.querySelector('#start-modal');
+      const closeButton = modal.querySelector('.modal-close');
+      const openButtons = [...document.querySelectorAll('.js-open-modal')];
+      let modalTrigger = null;
+
+      menuButton.addEventListener('click', () => {
+        const isOpen = menuButton.getAttribute('aria-expanded') === 'true';
+        menuButton.setAttribute('aria-expanded', String(!isOpen));
+        mobileNav.dataset.open = String(!isOpen);
+        menuButton.textContent = isOpen ? 'Menu' : 'Close';
+      });
+
+      mobileNav.addEventListener('click', (event) => {
+        if (event.target.matches('a')) {
+          menuButton.setAttribute('aria-expanded', 'false');
+          mobileNav.dataset.open = 'false';
+          menuButton.textContent = 'Menu';
+        }
+      });
+
+      filterButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const filter = button.dataset.filter;
+          filterButtons.forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
+          cards.forEach((card) => {
+            card.hidden = filter !== 'All' && card.dataset.category !== filter;
+          });
+        });
+      });
+
+      function openModal(event) {
+        modalTrigger = event.currentTarget;
+        modal.hidden = false;
+        document.body.classList.add('modal-open');
+        closeButton.focus();
+      }
+
+      function closeModal() {
+        modal.hidden = true;
+        document.body.classList.remove('modal-open');
+        if (modalTrigger) modalTrigger.focus();
+      }
+
+      openButtons.forEach((button) => button.addEventListener('click', openModal));
+      closeButton.addEventListener('click', closeModal);
+      modal.addEventListener('click', (event) => {
+        if (event.target === modal) closeModal();
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !modal.hidden) closeModal();
+        if (event.key === 'Tab' && !modal.hidden) {
+          event.preventDefault();
+          closeButton.focus();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

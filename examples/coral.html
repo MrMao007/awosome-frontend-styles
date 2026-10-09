@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="NOVA AI Workbench connects research, creation, and automation in one focused AI workspace.">
+  <title>NOVA AI Workbench — Coral</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream: #F5F0E8;
+      --cream-dark: #E8E0D4;
+      --ink: #1A1A1A;
+      --gray: #6B6B6B;
+      --light-gray: #B0B0B0;
+      --coral: #E85D5D;
+      --coral-dark: #D44A4A;
+      --white: #FFFFFF;
+      --pad: clamp(24px, 6.95vw, 100px);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 0;
+      overflow-x: hidden;
+      background: var(--cream);
+      color: var(--ink);
+      font-family: "Inter", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    body.modal-open { overflow: hidden; }
+    button, a { font: inherit; }
+    button { color: inherit; }
+    a { color: inherit; }
+    button:focus-visible, a:focus-visible {
+      outline: 4px solid var(--ink);
+      outline-offset: 4px;
+    }
+    .ink-surface button:focus-visible, .ink-surface a:focus-visible { outline-color: var(--coral); }
+    .skip-link {
+      position: fixed;
+      top: 8px;
+      left: 8px;
+      z-index: 100;
+      padding: 10px 14px;
+      background: var(--ink);
+      color: var(--cream);
+      transform: translateY(-150%);
+    }
+    .skip-link:focus { transform: translateY(0); }
+    .display {
+      font-family: "Bebas Neue", sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    .hatched { position: relative; isolation: isolate; }
+    .hatched::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background-image: repeating-linear-gradient(45deg, transparent 0 20px, rgba(0,0,0,.06) 20px 40px);
+    }
+
+    .site-header {
+      position: absolute;
+      inset: 0 0 auto;
+      z-index: 30;
+      padding: 34px 64px 0;
+    }
+    .nav-shell {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 28px;
+      padding-bottom: 16px;
+      border-bottom: 3px solid var(--ink);
+    }
+    .brand {
+      color: var(--ink);
+      text-decoration: none;
+      font-family: "Bebas Neue", sans-serif;
+      font-size: 34px;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+    }
+    .nav-links { display: flex; align-items: center; gap: clamp(22px, 3vw, 48px); }
+    .nav-links a {
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      border-bottom: 3px solid transparent;
+      padding: 6px 0;
+    }
+    .nav-links a:hover { border-color: var(--ink); }
+    .menu-toggle {
+      display: none;
+      border: 3px solid var(--ink);
+      border-radius: 0;
+      padding: 8px 12px;
+      background: transparent;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: minmax(300px, 38vh) minmax(690px, auto);
+    }
+    .hero-top {
+      position: relative;
+      z-index: 0;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      overflow: hidden;
+      padding: 140px 64px 44px;
+      background: var(--coral);
+    }
+    .wallpaper {
+      position: absolute;
+      right: 48px;
+      bottom: -70px;
+      z-index: -1;
+      color: rgba(0,0,0,.12);
+      font-family: "Bebas Neue", sans-serif;
+      font-size: clamp(210px, 24vw, 340px);
+      line-height: .7;
+      letter-spacing: 8px;
+      text-transform: uppercase;
+      user-select: none;
+    }
+    .hero-top-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+    .hero-top-word {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: clamp(42px, 6vw, 82px);
+      line-height: .85;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+    .hero-bottom {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, .35fr);
+      gap: 64px;
+      align-items: center;
+      padding: 64px;
+      background: var(--cream);
+    }
+    .eyebrow, .section-tag, .filter-button, .card-category {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+    .eyebrow { color: var(--coral); }
+    .hero h1 {
+      max-width: 1050px;
+      margin: 18px 0 22px;
+      font-family: "Bebas Neue", sans-serif;
+      font-size: clamp(76px, 9.4vw, 142px);
+      font-weight: 400;
+      line-height: .88;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+    .hero-copy {
+      max-width: 760px;
+      margin: 0;
+      color: var(--gray);
+      font-size: clamp(18px, 1.7vw, 24px);
+      font-weight: 300;
+      line-height: 1.5;
+    }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
+    .button {
+      min-height: 52px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid var(--ink);
+      border-radius: 0;
+      padding: 12px 20px;
+      background: transparent;
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .button.primary { background: var(--coral); }
+    .button:hover { background: var(--cream-dark); }
+    .button.primary:hover { background: var(--coral-dark); }
+    .hero-stamp { align-self: stretch; display: grid; align-content: end; border-left: 4px solid var(--coral); padding: 28px 0 28px 28px; }
+    .hero-stamp strong {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: clamp(76px, 8vw, 120px);
+      font-weight: 400;
+      line-height: .78;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+    .hero-stamp span { margin-top: 16px; color: var(--gray); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; }
+
+    .metrics {
+      position: relative;
+      z-index: 0;
+      padding: 0 var(--pad);
+      background: var(--coral);
+    }
+    .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-left: 3px solid var(--ink); }
+    .metric { min-height: 250px; padding: 44px 32px; border-right: 3px solid var(--ink); display: flex; flex-direction: column; justify-content: center; }
+    .metric-value {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: clamp(76px, 8vw, 126px);
+      font-weight: 400;
+      line-height: .8;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+    .metric-label { margin-top: 20px; font-size: 12px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; }
+
+    section.content-section { padding: 120px var(--pad); }
+    .section-header {
+      display: flex;
+      align-items: flex-end;
+      gap: 24px;
+      padding-bottom: 24px;
+      margin-bottom: 64px;
+      border-bottom: 3px solid rgba(26,26,26,.15);
+    }
+    .section-number, .section-header h2 {
+      margin: 0;
+      font-family: "Bebas Neue", sans-serif;
+      font-size: clamp(54px, 5vw, 72px);
+      font-weight: 400;
+      line-height: .8;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .section-tag { margin-left: auto; color: var(--gray); }
+    .filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 36px; }
+    .filter-button {
+      border: 3px solid var(--ink);
+      border-radius: 0;
+      padding: 10px 16px;
+      background: transparent;
+      cursor: pointer;
+    }
+    .filter-button[aria-pressed="true"] { background: var(--ink); color: var(--cream); }
+    .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+    .feature-card {
+      min-height: 290px;
+      padding: 32px;
+      border-top: 5px solid var(--coral);
+      background: var(--white);
+    }
+    .feature-card[hidden] { display: none; }
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 24px;
+      background: var(--coral);
+      color: var(--white);
+      font-family: "Bebas Neue", sans-serif;
+      font-size: 24px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .feature-card h3 {
+      margin: 0;
+      font-family: "Bebas Neue", sans-serif;
+      font-size: 34px;
+      font-weight: 400;
+      line-height: 1.05;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .feature-card p { margin: 14px 0 0; color: var(--gray); font-size: 14px; line-height: 1.6; }
+    .card-category { display: block; margin-top: 24px; color: var(--coral); }
+
+    .impact-section { padding: 120px var(--pad); background: var(--ink); color: var(--cream); }
+    .impact-section .section-header { border-color: rgba(245,240,232,.22); }
+    .impact-section .section-tag { color: var(--light-gray); }
+    .impact-section .section-number { color: var(--coral); }
+    .impact-grid { display: grid; grid-template-columns: minmax(240px, .35fr) minmax(0, 1fr); gap: 56px; }
+    .impact-copy {
+      align-self: stretch;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 30px;
+      border-left: 5px solid var(--coral);
+      background: var(--cream-dark);
+      color: var(--ink);
+    }
+    .impact-copy strong {
+      font-family: "Bebas Neue", sans-serif;
+      font-size: clamp(64px, 8vw, 112px);
+      font-weight: 400;
+      line-height: .8;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+    .impact-copy span { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; }
+    .bar-chart {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      align-items: end;
+      gap: clamp(10px, 2.2vw, 28px);
+      min-height: 360px;
+      padding: 24px 24px 0;
+      border-bottom: 4px solid var(--cream);
+    }
+    .bar-item { height: 100%; display: grid; grid-template-rows: 1fr auto; align-items: end; min-width: 0; }
+    .bar-area { height: 260px; display: flex; align-items: flex-end; }
+    .bar { width: 100%; background: var(--coral); border-top: 5px solid var(--cream); }
+    .bar-label { min-height: 82px; padding: 14px 2px 0; text-align: center; }
+    .bar-label strong {
+      display: block;
+      color: var(--coral);
+      font-family: "Bebas Neue", sans-serif;
+      font-size: 30px;
+      font-weight: 400;
+      line-height: 1;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .bar-label span { display: block; margin-top: 6px; color: var(--light-gray); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; overflow-wrap: anywhere; }
+
+    .closing {
+      min-height: 620px;
+      display: grid;
+      grid-template-columns: 42% 58%;
+      background: var(--cream);
+    }
+    .closing-art {
+      position: relative;
+      z-index: 0;
+      overflow: hidden;
+      background: var(--coral);
+    }
+    .closing-art .wallpaper { top: 50%; right: 7%; bottom: auto; transform: translateY(-50%); font-size: clamp(240px, 36vw, 500px); }
+    .closing-content { display: flex; align-items: center; padding: 80px var(--pad); }
+    .closing h2 {
+      max-width: 800px;
+      margin: 18px 0 32px;
+      font-family: "Bebas Neue", sans-serif;
+      font-size: clamp(70px, 8vw, 120px);
+      font-weight: 400;
+      line-height: .86;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+    .site-footer { padding: 0 var(--pad) 36px; background: var(--cream); }
+    .footer-line { display: flex; justify-content: space-between; gap: 24px; padding-top: 20px; border-top: 3px solid var(--ink); font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(26,26,26,.78);
+    }
+    .modal-backdrop[hidden] { display: none; }
+    .modal {
+      width: min(650px, 100%);
+      border: 5px solid var(--coral);
+      border-radius: 0;
+      padding: 34px;
+      background: var(--cream);
+      color: var(--ink);
+    }
+    .modal-top { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-bottom: 18px; border-bottom: 3px solid var(--ink); }
+    .modal-top span { color: var(--coral); font-size: 12px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; }
+    .modal h2 {
+      margin: 30px 0 12px;
+      font-family: "Bebas Neue", sans-serif;
+      font-size: clamp(58px, 8vw, 86px);
+      font-weight: 400;
+      line-height: .88;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+    .modal p { max-width: 52ch; margin: 0; color: var(--gray); line-height: 1.6; }
+    .close-button { border: 3px solid var(--ink); border-radius: 0; padding: 9px 12px; background: transparent; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; }
+
+    @media (max-width: 980px) {
+      .hero-bottom { grid-template-columns: 1fr; }
+      .hero-stamp { display: none; }
+      .card-grid { grid-template-columns: 1fr 1fr; }
+      .impact-grid { grid-template-columns: 1fr; }
+      .impact-copy { min-height: 190px; }
+    }
+    @media (max-width: 760px) {
+      .site-header {
+        position: relative;
+        padding: 22px 24px 0;
+        background: var(--coral);
+      }
+      .nav-shell { align-items: center; flex-wrap: wrap; }
+      .brand { font-size: 28px; letter-spacing: 4px; }
+      .menu-toggle { display: inline-block; }
+      .nav-links {
+        display: none;
+        flex-basis: 100%;
+        gap: 0;
+        border-top: 2px solid var(--ink);
+      }
+      .nav-links.is-open { display: grid; }
+      .nav-links a { padding: 14px 0; border-bottom: 2px solid var(--ink); }
+      .hero { grid-template-rows: 260px auto; }
+      .hero-top { padding: 40px 24px 28px; }
+      .hero-top-word { font-size: 42px; }
+      .hero-top-label { max-width: 120px; line-height: 1.6; }
+      .wallpaper { right: 12px; bottom: -38px; font-size: 200px; }
+      .hero-bottom { padding: 58px 24px 70px; }
+      .hero h1 { font-size: clamp(70px, 21vw, 102px); letter-spacing: 2px; }
+      .actions { align-items: stretch; }
+      .button { width: 100%; }
+      .metrics { padding: 0; }
+      .metrics-grid, .card-grid { grid-template-columns: 1fr; }
+      .metric { min-height: 200px; border-left: 3px solid var(--ink); border-bottom: 3px solid var(--ink); }
+      section.content-section, .impact-section { padding-top: 84px; padding-bottom: 84px; }
+      .section-header { align-items: flex-start; flex-wrap: wrap; gap: 14px; }
+      .section-tag { flex-basis: 100%; margin-left: 0; }
+      .feature-card { min-height: 260px; }
+      .impact-copy { min-height: 170px; }
+      .bar-chart { min-height: 300px; padding-inline: 4px; gap: 7px; }
+      .bar-area { height: 210px; }
+      .bar-label span { font-size: 9px; letter-spacing: .5px; }
+      .closing { min-height: 640px; grid-template-columns: 1fr; grid-template-rows: 220px auto; }
+      .closing-art .wallpaper { font-size: 280px; }
+      .closing-content { padding: 72px 24px; }
+      .closing h2 { font-size: clamp(68px, 19vw, 96px); }
+      .footer-line { flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <nav class="nav-shell" aria-label="Primary navigation">
+      <a class="brand" href="#product">NOVA AI</a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+      <div class="nav-links" id="nav-links">
+        <a href="#product">Product</a>
+        <a href="#capabilities">Capabilities</a>
+        <a href="#impact">Impact</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="product" aria-labelledby="hero-title">
+      <div class="hero-top hatched">
+        <span class="hero-top-label">AI OPERATIONS · 2026</span>
+        <span class="hero-top-word">Workbench</span>
+        <span class="wallpaper" aria-hidden="true">01</span>
+      </div>
+      <div class="hero-bottom">
+        <div>
+          <p class="eyebrow">AI OPERATIONS · 2026</p>
+          <h1 id="hero-title">Turn scattered work into clear decisions.</h1>
+          <p class="hero-copy">NOVA connects research, creation, and automation in one focused AI workspace.</p>
+          <div class="actions">
+            <button class="button primary" type="button" data-open-modal>Start building</button>
+            <a class="button" href="#capabilities">Explore capabilities</a>
+          </div>
+        </div>
+        <aside class="hero-stamp" aria-label="NOVA modes"><strong>03</strong><span>Research · Create · Automate</span></aside>
+      </div>
+    </section>
+
+    <section class="metrics hatched" aria-label="NOVA impact metrics">
+      <div class="metrics-grid">
+        <div class="metric"><span class="metric-value">87%</span><span class="metric-label">Faster synthesis</span></div>
+        <div class="metric"><span class="metric-value">4.2×</span><span class="metric-label">More output</span></div>
+        <div class="metric"><span class="metric-value">12h</span><span class="metric-label">Saved weekly</span></div>
+      </div>
+    </section>
+
+    <section class="content-section" id="capabilities" aria-labelledby="capabilities-title">
+      <header class="section-header">
+        <span class="section-number">01</span>
+        <h2 id="capabilities-title">One workspace. Three modes.</h2>
+        <span class="section-tag">Capability index</span>
+      </header>
+      <div class="filters" role="group" aria-label="Filter capabilities">
+        <button class="filter-button" type="button" data-filter="all" aria-pressed="true">All</button>
+        <button class="filter-button" type="button" data-filter="research" aria-pressed="false">Research</button>
+        <button class="filter-button" type="button" data-filter="create" aria-pressed="false">Create</button>
+        <button class="filter-button" type="button" data-filter="automate" aria-pressed="false">Automate</button>
+      </div>
+      <div class="card-grid">
+        <article class="feature-card" data-category="research"><span class="card-icon" aria-hidden="true">R1</span><h3>Deep research</h3><p>Synthesize evidence across sources into a concise, decision-ready brief.</p><span class="card-category">Research</span></article>
+        <article class="feature-card" data-category="research"><span class="card-icon" aria-hidden="true">R2</span><h3>Source map</h3><p>Trace every claim to its origin and see connections at a glance.</p><span class="card-category">Research</span></article>
+        <article class="feature-card" data-category="create"><span class="card-icon" aria-hidden="true">C1</span><h3>Campaign studio</h3><p>Turn one strategy into coordinated concepts for every channel.</p><span class="card-category">Create</span></article>
+        <article class="feature-card" data-category="create"><span class="card-icon" aria-hidden="true">C2</span><h3>Draft copilot</h3><p>Shape rough thinking into clear, on-brand drafts without losing voice.</p><span class="card-category">Create</span></article>
+        <article class="feature-card" data-category="automate"><span class="card-icon" aria-hidden="true">A1</span><h3>Workflow builder</h3><p>Connect repeatable steps into dependable flows your team can run.</p><span class="card-category">Automate</span></article>
+        <article class="feature-card" data-category="automate"><span class="card-icon" aria-hidden="true">A2</span><h3>Review agent</h3><p>Check work against your standards before it reaches the next stage.</p><span class="card-category">Automate</span></article>
+      </div>
+    </section>
+
+    <section class="impact-section ink-surface" id="impact" aria-labelledby="impact-title">
+      <header class="section-header">
+        <span class="section-number">02</span>
+        <h2 id="impact-title">Weekly impact</h2>
+        <span class="section-tag">Output index / 100</span>
+      </header>
+      <div class="impact-grid">
+        <div class="impact-copy"><strong>4 days</strong><span>A focused week compounds as connected work moves from evidence to execution.</span></div>
+        <div class="bar-chart" role="img" aria-label="Weekly impact: Monday 42, Tuesday 68, Wednesday 84, Thursday 96">
+          <div class="bar-item" aria-hidden="true"><div class="bar-area"><div class="bar" style="height:42%"></div></div><div class="bar-label"><strong>42</strong><span>Monday</span></div></div>
+          <div class="bar-item" aria-hidden="true"><div class="bar-area"><div class="bar" style="height:68%"></div></div><div class="bar-label"><strong>68</strong><span>Tuesday</span></div></div>
+          <div class="bar-item" aria-hidden="true"><div class="bar-area"><div class="bar" style="height:84%"></div></div><div class="bar-label"><strong>84</strong><span>Wednesday</span></div></div>
+          <div class="bar-item" aria-hidden="true"><div class="bar-area"><div class="bar" style="height:96%"></div></div><div class="bar-label"><strong>96</strong><span>Thursday</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="closing" aria-labelledby="closing-title">
+      <div class="closing-art hatched" aria-hidden="true"><span class="wallpaper">03</span></div>
+      <div class="closing-content">
+        <div>
+          <p class="eyebrow">NOVA AI WORKBENCH</p>
+          <h2 id="closing-title">Ready to move from prompt to progress?</h2>
+          <button class="button primary" type="button" data-open-modal>Ready to move from prompt to progress?</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-line"><span>NOVA AI WORKBENCH</span><span>RESEARCH · CREATE · AUTOMATE</span></div>
+  </footer>
+
+  <div class="modal-backdrop" id="build-modal" hidden>
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-copy">
+      <div class="modal-top"><span>NOVA / ACCESS</span><button class="close-button" type="button" data-close-modal aria-label="Close build dialog">Close</button></div>
+      <h2 id="modal-title">Build with NOVA.</h2>
+      <p id="modal-copy">Your focused AI workspace is ready for research, creation, and automation.</p>
+    </section>
+  </div>
+
+  <script>
+    (() => {
+      const menuButton = document.querySelector('.menu-toggle');
+      const navLinks = document.getElementById('nav-links');
+      menuButton.addEventListener('click', () => {
+        const open = menuButton.getAttribute('aria-expanded') === 'true';
+        menuButton.setAttribute('aria-expanded', String(!open));
+        navLinks.classList.toggle('is-open', !open);
+      });
+      navLinks.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => {
+        menuButton.setAttribute('aria-expanded', 'false');
+        navLinks.classList.remove('is-open');
+      }));
+
+      const filterButtons = [...document.querySelectorAll('[data-filter]')];
+      const cards = [...document.querySelectorAll('[data-category]')];
+      filterButtons.forEach((button) => button.addEventListener('click', () => {
+        const filter = button.dataset.filter;
+        filterButtons.forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
+        cards.forEach((card) => { card.hidden = filter !== 'all' && card.dataset.category !== filter; });
+      }));
+
+      const modal = document.getElementById('build-modal');
+      const closeButton = modal.querySelector('[data-close-modal]');
+      let trigger = null;
+      const openModal = (button) => {
+        trigger = button;
+        modal.hidden = false;
+        document.body.classList.add('modal-open');
+        closeButton.focus();
+      };
+      const closeModal = () => {
+        modal.hidden = true;
+        document.body.classList.remove('modal-open');
+        if (trigger) trigger.focus();
+      };
+      document.querySelectorAll('[data-open-modal]').forEach((button) => button.addEventListener('click', () => openModal(button)));
+      closeButton.addEventListener('click', closeModal);
+      modal.addEventListener('click', (event) => { if (event.target === modal) closeModal(); });
+      document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && !modal.hidden) closeModal(); });
+    })();
+  </script>
+</body>
+</html>

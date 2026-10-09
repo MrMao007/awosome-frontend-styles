@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="NOVA AI Workbench connects research, creation, and automation in one focused AI workspace.">
+  <title>NOVA AI Workbench — Clear decisions, faster</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;800;900&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --pink: #FE90E8;
+      --blue: #C0F7FE;
+      --green: #99E885;
+      --yellow: #F7CB46;
+      --cream: #FFDC8B;
+      --off-white: #FFFDF5;
+      --white: #FFFFFF;
+      --black: #000000;
+      --border: 4px solid var(--black);
+      --chrome-border: 3px solid var(--black);
+      --page: min(1200px, calc(100% - 48px));
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      overflow-x: hidden;
+      color: var(--black);
+      background: var(--off-white);
+      font-family: "Inter", sans-serif;
+      font-weight: 500;
+      line-height: 1.6;
+    }
+    body.modal-open { overflow: hidden; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { font: inherit; }
+    a { color: inherit; }
+    :focus-visible { outline: 5px solid var(--pink); outline-offset: 4px; }
+    .skip-link {
+      position: fixed;
+      z-index: 1000;
+      top: 8px;
+      left: 8px;
+      padding: 8px 14px;
+      border: var(--chrome-border);
+      background: var(--yellow);
+      box-shadow: 4px 4px 0 var(--black);
+      font-weight: 800;
+      transform: translateY(-180%);
+    }
+    .skip-link:focus { transform: translateY(0); }
+    .shell { width: var(--page); margin-inline: auto; }
+
+    .site-header { position: relative; z-index: 30; padding: 18px 0; background: var(--off-white); }
+    .header-bar {
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 10px 13px 10px 18px;
+      border: var(--chrome-border);
+      background: var(--white);
+      box-shadow: 4px 4px 0 var(--black);
+    }
+    .brand {
+      font-size: 1.25rem;
+      font-weight: 900;
+      letter-spacing: -.03em;
+      line-height: 1;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+    .desktop-nav { display: flex; align-items: center; gap: 10px; }
+    .desktop-nav a {
+      padding: 7px 10px;
+      border: 2px solid transparent;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .desktop-nav a:hover { border-color: var(--black); background: var(--blue); }
+    .menu-toggle {
+      display: none;
+      padding: 8px 12px;
+      border: var(--chrome-border);
+      background: var(--yellow);
+      box-shadow: 4px 4px 0 var(--black);
+      font-family: "Space Grotesk", sans-serif;
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .menu-toggle:active { transform: translate(4px, 4px); box-shadow: none; }
+    .mobile-nav {
+      display: none;
+      margin-top: 10px;
+      border: var(--chrome-border);
+      background: var(--pink);
+      box-shadow: 4px 4px 0 var(--black);
+    }
+    .mobile-nav[data-open="true"] { display: grid; }
+    .mobile-nav a { padding: 13px 16px; border-bottom: 2px solid var(--black); font-weight: 800; text-decoration: none; }
+    .mobile-nav a:last-child { border-bottom: 0; }
+
+    .frame { position: relative; overflow: hidden; border-top: var(--border); }
+    .label-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      margin: 0 0 24px;
+      padding: 5px 11px;
+      border: var(--chrome-border);
+      background: var(--pink);
+      box-shadow: 4px 4px 0 var(--black);
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(.74rem, 1vw, .88rem);
+      font-weight: 700;
+      letter-spacing: .08em;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+    .display, h1, h2, h3, .metric-value {
+      margin: 0;
+      font-weight: 900;
+      letter-spacing: -.03em;
+      line-height: .94;
+      text-transform: uppercase;
+    }
+    .tilt-shape { position: absolute; pointer-events: none; }
+
+    .hero { padding: 78px 0 96px; background: var(--cream); }
+    .hero-grid { position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(280px, .65fr); gap: 54px; align-items: end; }
+    .hero h1 { max-width: 10ch; font-size: clamp(3.7rem, 9vw, 8.2rem); overflow-wrap: anywhere; }
+    .hero-panel {
+      padding: 28px;
+      border: var(--border);
+      background: var(--white);
+      box-shadow: 8px 8px 0 var(--black);
+      transform: rotate(1.5deg);
+    }
+    .hero-panel p { margin: 0; font-size: clamp(1.05rem, 1.8vw, 1.35rem); }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 28px; }
+    .button {
+      min-height: 54px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 18px;
+      border: var(--chrome-border);
+      color: var(--black);
+      background: var(--yellow);
+      box-shadow: 4px 4px 0 var(--black);
+      font-weight: 900;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .button:hover { background: var(--pink); }
+    .button:active { transform: translate(4px, 4px); box-shadow: none; }
+    .button-secondary { background: var(--blue); }
+    .hero-star {
+      top: 38px;
+      right: 5%;
+      width: 104px;
+      height: 104px;
+      border: var(--border);
+      background: var(--pink);
+      transform: rotate(12deg);
+      clip-path: polygon(50% 0,62% 31%,95% 18%,73% 48%,100% 69%,65% 68%,62% 100%,44% 73%,15% 94%,24% 59%,0 43%,34% 38%);
+    }
+    .hero-square {
+      left: 3%;
+      bottom: 24px;
+      width: 54px;
+      height: 54px;
+      border: var(--border);
+      background: var(--green);
+      transform: rotate(-9deg);
+    }
+
+    .metrics-section { padding: 94px 0; background: var(--green); }
+    .metrics-head { position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: end; gap: 30px; margin-bottom: 42px; }
+    .metrics-head h2 { max-width: 8ch; font-size: clamp(3rem, 6.5vw, 6rem); }
+    .metrics {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .metric {
+      position: relative;
+      min-height: 242px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 26px;
+      border: var(--border);
+      background: var(--white);
+      box-shadow: 8px 8px 0 var(--black);
+    }
+    .metric:nth-child(1) { transform: rotate(-2deg); }
+    .metric:nth-child(2) { background: var(--pink); transform: rotate(2deg); }
+    .metric:nth-child(3) { background: var(--blue); transform: rotate(-1deg); }
+    .metric-dot { width: 24px; height: 24px; border: 3px solid var(--black); border-radius: 50%; background: var(--yellow); }
+    .metric-value { font-size: clamp(3.5rem, 7vw, 6.8rem); }
+    .metric-label { margin: 8px 0 0; font-family: "Space Grotesk", sans-serif; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .metrics-zap { top: 24px; right: 2%; width: 52px; height: 92px; border: var(--border); background: var(--cream); transform: rotate(10deg); clip-path: polygon(48% 0,100% 0,68% 38%,100% 38%,26% 100%,41% 54%,0 54%); }
+
+    .capabilities { padding: 108px 0; background: var(--blue); }
+    .capabilities-top { position: relative; z-index: 2; display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: end; margin-bottom: 44px; }
+    .capabilities h2 { max-width: 10ch; font-size: clamp(3rem, 7vw, 6.3rem); }
+    .filters { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; }
+    .filter-button {
+      padding: 9px 13px;
+      border: var(--chrome-border);
+      background: var(--white);
+      box-shadow: 4px 4px 0 var(--black);
+      font-family: "Space Grotesk", sans-serif;
+      font-size: .82rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .filter-button:hover { background: var(--cream); }
+    .filter-button[aria-pressed="true"] { background: var(--yellow); transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--black); }
+    .card-grid { position: relative; z-index: 2; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .feature-card {
+      position: relative;
+      min-height: 272px;
+      display: flex;
+      flex-direction: column;
+      padding: 26px;
+      border: var(--border);
+      background: var(--white);
+      box-shadow: 8px 8px 0 var(--black);
+    }
+    .feature-card:nth-child(odd) { transform: rotate(-1deg); }
+    .feature-card:nth-child(even) { transform: rotate(1.5deg); }
+    .feature-card[hidden] { display: none; }
+    .card-notch {
+      position: absolute;
+      top: -4px;
+      right: 28px;
+      width: 46px;
+      height: 22px;
+      border: var(--border);
+      border-top: 0;
+      background: var(--blue);
+    }
+    .icon-square {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border: var(--chrome-border);
+      background: var(--pink);
+      box-shadow: 4px 4px 0 var(--black);
+      font-weight: 900;
+      transform: rotate(-5deg);
+    }
+    .feature-card[data-category="Create"] .icon-square { background: var(--yellow); transform: rotate(6deg); }
+    .feature-card[data-category="Automate"] .icon-square { background: var(--green); transform: rotate(-7deg); }
+    .card-type { margin: 24px 0 8px; font-family: "Space Grotesk", sans-serif; font-size: .75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .feature-card h3 { font-size: clamp(1.65rem, 2.7vw, 2.4rem); }
+    .feature-card p { margin: auto 0 0; padding-top: 18px; }
+    .capabilities-diamond { left: 2%; bottom: 36px; width: 64px; height: 64px; border: var(--border); background: var(--pink); transform: rotate(45deg); }
+
+    .impact { padding: 104px 0; background: var(--pink); }
+    .impact-grid { position: relative; z-index: 2; display: grid; grid-template-columns: .58fr 1.42fr; gap: 30px; align-items: stretch; }
+    .impact-copy {
+      padding: 30px;
+      border: var(--border);
+      background: var(--white);
+      box-shadow: 8px 8px 0 var(--black);
+      transform: rotate(-1.5deg);
+    }
+    .impact-copy h2 { font-size: clamp(3rem, 5.4vw, 5.6rem); }
+    .impact-copy p { margin: 26px 0 0; }
+    .chart-card {
+      min-width: 0;
+      padding: 34px 30px 26px;
+      border: var(--border);
+      background: var(--green);
+      box-shadow: 8px 8px 0 var(--black);
+      transform: rotate(1deg);
+    }
+    .chart {
+      min-height: 390px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(56px, 1fr));
+      align-items: end;
+      gap: 18px;
+      border-bottom: var(--border);
+    }
+    .bar-item { min-width: 0; text-align: center; }
+    .bar-value {
+      display: inline-block;
+      margin-bottom: 8px;
+      padding: 2px 7px;
+      border: 2px solid var(--black);
+      background: var(--white);
+      font-weight: 900;
+      line-height: 1.3;
+    }
+    .bar { width: 100%; height: calc(var(--value) * 3px); min-height: 28px; border: var(--border); border-bottom: 0; background: var(--yellow); }
+    .bar-item:nth-child(2) .bar, .bar-item:nth-child(4) .bar { background: var(--blue); }
+    .bar-label { padding: 10px 2px 4px; font-family: "Space Grotesk", sans-serif; font-size: .78rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; overflow-wrap: anywhere; }
+    .impact-cross { top: 30px; right: 2%; width: 70px; height: 70px; transform: rotate(12deg); }
+    .impact-cross::before, .impact-cross::after { content: ""; position: absolute; inset: 28px 0; border: 3px solid var(--black); background: var(--cream); }
+    .impact-cross::after { transform: rotate(90deg); }
+
+    .closing { padding: 102px 0 112px; color: var(--white); background: var(--black); }
+    .closing-inner { position: relative; z-index: 2; display: grid; grid-template-columns: 1fr auto; gap: 46px; align-items: end; }
+    .closing .label-pill { color: var(--black); background: var(--pink); }
+    .closing h2 { max-width: 11ch; font-size: clamp(3.2rem, 7.2vw, 6.8rem); }
+    .closing-button {
+      width: min(350px, 100%);
+      min-height: 190px;
+      padding: 26px;
+      border: 4px solid var(--white);
+      color: var(--black);
+      background: var(--yellow);
+      box-shadow: 8px 8px 0 var(--yellow);
+      font-size: clamp(1.35rem, 2.6vw, 2.2rem);
+      font-weight: 900;
+      letter-spacing: -.03em;
+      line-height: 1;
+      text-align: left;
+      text-transform: uppercase;
+      transform: rotate(2deg);
+      cursor: pointer;
+    }
+    .closing-button:hover { background: var(--pink); }
+    .closing-button:active { transform: translate(8px, 8px) rotate(2deg); box-shadow: 4px 4px 0 var(--yellow); }
+    .closing-star {
+      right: 3%;
+      top: 26px;
+      width: 82px;
+      height: 82px;
+      border: 4px solid var(--white);
+      background: var(--blue);
+      transform: rotate(-10deg);
+      clip-path: polygon(50% 0,61% 35%,95% 20%,72% 50%,100% 75%,63% 68%,50% 100%,39% 66%,5% 82%,28% 51%,0 27%,39% 35%);
+    }
+    .site-footer { padding: 20px 0; border-top: 4px solid var(--white); color: var(--white); background: var(--black); }
+    .footer-row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 14px; font-family: "Space Grotesk", sans-serif; font-size: .76rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+
+    .modal[hidden] { display: none; }
+    .modal { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; padding: 24px; background: rgba(0, 0, 0, .78); }
+    .modal-dialog {
+      width: min(570px, 100%);
+      padding: 30px;
+      border: var(--border);
+      background: var(--white);
+      box-shadow: 8px 8px 0 var(--yellow);
+      transform: rotate(-1deg);
+    }
+    .modal-top { display: flex; justify-content: space-between; align-items: start; gap: 24px; }
+    .modal-dialog h2 { max-width: 8ch; font-size: clamp(2.8rem, 8vw, 5rem); }
+    .modal-dialog p { margin: 26px 0 0; }
+    .modal-close {
+      flex: 0 0 auto;
+      width: 50px;
+      height: 50px;
+      border: var(--chrome-border);
+      background: var(--pink);
+      box-shadow: 4px 4px 0 var(--black);
+      font-size: 1.55rem;
+      font-weight: 900;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .modal-close:active { transform: translate(4px, 4px); box-shadow: none; }
+
+    @media (max-width: 960px) {
+      .hero-grid, .impact-grid { grid-template-columns: 1fr; }
+      .hero-panel { max-width: 650px; }
+      .card-grid { grid-template-columns: repeat(2, 1fr); }
+      .closing-inner { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 760px) {
+      :root { --page: min(100% - 28px, 1200px); }
+      html { scroll-behavior: auto; }
+      .site-header { padding: 13px 0; }
+      .header-bar { min-height: 56px; }
+      .desktop-nav { display: none; }
+      .menu-toggle { display: block; }
+      .hero { padding: 58px 0 72px; }
+      .hero-grid { gap: 36px; }
+      .hero h1 { font-size: clamp(3.1rem, 15.5vw, 5.4rem); }
+      .hero-panel { padding: 22px; transform: rotate(1deg); }
+      .hero-actions { flex-direction: column; }
+      .button { width: 100%; }
+      .hero-star { width: 68px; height: 68px; right: -18px; }
+      .metrics-section, .capabilities, .impact, .closing { padding: 74px 0; }
+      .metrics-head { display: block; }
+      .metrics { grid-template-columns: 1fr; }
+      .metric { min-height: 205px; }
+      .capabilities-top { grid-template-columns: 1fr; gap: 26px; }
+      .filters { justify-content: flex-start; }
+      .card-grid { grid-template-columns: 1fr; }
+      .feature-card { min-height: 240px; transform: rotate(0) !important; }
+      .impact-copy { padding: 24px; }
+      .chart-card { padding: 28px 10px 20px; transform: rotate(.5deg); }
+      .chart { min-height: 305px; gap: 7px; }
+      .bar { height: calc(var(--value) * 2.15px); }
+      .bar-label { font-size: .65rem; letter-spacing: 0; }
+      .closing-button { min-height: 160px; box-shadow: 8px 8px 0 var(--yellow); }
+      .modal-dialog { padding: 22px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="shell">
+      <div class="header-bar">
+        <a class="brand" href="#main" aria-label="NOVA AI home">NOVA AI</a>
+        <nav class="desktop-nav" aria-label="Primary navigation">
+          <a href="#product">Product</a>
+          <a href="#capabilities">Capabilities</a>
+          <a href="#impact">Impact</a>
+        </nav>
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-navigation">Menu</button>
+      </div>
+      <nav class="mobile-nav" id="mobile-navigation" aria-label="Mobile navigation" data-open="false">
+        <a href="#product">Product</a>
+        <a href="#capabilities">Capabilities</a>
+        <a href="#impact">Impact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero frame" id="product" aria-labelledby="hero-title">
+      <span class="tilt-shape hero-star" aria-hidden="true"></span>
+      <span class="tilt-shape hero-square" aria-hidden="true"></span>
+      <div class="shell hero-grid">
+        <div>
+          <p class="label-pill">AI OPERATIONS · 2026</p>
+          <h1 id="hero-title">Turn scattered work into clear decisions.</h1>
+        </div>
+        <div class="hero-panel">
+          <p>NOVA connects research, creation, and automation in one focused AI workspace.</p>
+          <div class="hero-actions">
+            <button class="button js-open-modal" type="button">Start building</button>
+            <a class="button button-secondary" href="#capabilities">Explore capabilities</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="metrics-section frame" aria-labelledby="metrics-title">
+      <span class="tilt-shape metrics-zap" aria-hidden="true"></span>
+      <div class="shell">
+        <div class="metrics-head">
+          <div><p class="label-pill">THE NUMBERS</p><h2 id="metrics-title">Work, amplified.</h2></div>
+        </div>
+        <div class="metrics">
+          <article class="metric"><span class="metric-dot" aria-hidden="true"></span><div><p class="metric-value">87%</p><p class="metric-label">Faster synthesis</p></div></article>
+          <article class="metric"><span class="metric-dot" aria-hidden="true"></span><div><p class="metric-value">4.2×</p><p class="metric-label">More output</p></div></article>
+          <article class="metric"><span class="metric-dot" aria-hidden="true"></span><div><p class="metric-value">12h</p><p class="metric-label">Saved weekly</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="capabilities frame" id="capabilities" aria-labelledby="capabilities-title">
+      <span class="tilt-shape capabilities-diamond" aria-hidden="true"></span>
+      <div class="shell">
+        <div class="capabilities-top">
+          <div><p class="label-pill">NOVA MODES</p><h2 id="capabilities-title">One workspace. Three modes.</h2></div>
+          <div class="filters" role="group" aria-label="Filter capabilities">
+            <button class="filter-button" type="button" data-filter="All" aria-pressed="true">All</button>
+            <button class="filter-button" type="button" data-filter="Research" aria-pressed="false">Research</button>
+            <button class="filter-button" type="button" data-filter="Create" aria-pressed="false">Create</button>
+            <button class="filter-button" type="button" data-filter="Automate" aria-pressed="false">Automate</button>
+          </div>
+        </div>
+
+        <div class="card-grid" aria-live="polite">
+          <article class="feature-card" data-category="Research">
+            <span class="card-notch" aria-hidden="true"></span><span class="icon-square" aria-hidden="true">01</span><p class="card-type">Research</p><h3>Deep research</h3><p>Turn broad questions into structured, source-backed findings.</p>
+          </article>
+          <article class="feature-card" data-category="Research">
+            <span class="card-notch" aria-hidden="true"></span><span class="icon-square" aria-hidden="true">02</span><p class="card-type">Research</p><h3>Source map</h3><p>Trace evidence, themes, and gaps across every useful source.</p>
+          </article>
+          <article class="feature-card" data-category="Create">
+            <span class="card-notch" aria-hidden="true"></span><span class="icon-square" aria-hidden="true">03</span><p class="card-type">Create</p><h3>Campaign studio</h3><p>Shape one brief into coordinated ideas, assets, and messages.</p>
+          </article>
+          <article class="feature-card" data-category="Create">
+            <span class="card-notch" aria-hidden="true"></span><span class="icon-square" aria-hidden="true">04</span><p class="card-type">Create</p><h3>Draft copilot</h3><p>Move from rough thinking to crisp, audience-ready drafts.</p>
+          </article>
+          <article class="feature-card" data-category="Automate">
+            <span class="card-notch" aria-hidden="true"></span><span class="icon-square" aria-hidden="true">05</span><p class="card-type">Automate</p><h3>Workflow builder</h3><p>Connect repeatable steps into dependable no-code workflows.</p>
+          </article>
+          <article class="feature-card" data-category="Automate">
+            <span class="card-notch" aria-hidden="true"></span><span class="icon-square" aria-hidden="true">06</span><p class="card-type">Automate</p><h3>Review agent</h3><p>Check every deliverable against rules before it moves forward.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="impact frame" id="impact" aria-labelledby="impact-title">
+      <span class="tilt-shape impact-cross" aria-hidden="true"></span>
+      <div class="shell impact-grid">
+        <div class="impact-copy">
+          <p class="label-pill">LIVE SIGNAL</p>
+          <h2 id="impact-title">Weekly impact</h2>
+          <p>Teams build momentum as connected work compounds through the week.</p>
+        </div>
+        <div class="chart-card">
+          <div class="chart" role="img" aria-label="Weekly impact bar chart: Monday 42, Tuesday 68, Wednesday 84, Thursday 96">
+            <div class="bar-item"><span class="bar-value">42</span><div class="bar" style="--value:42"></div><div class="bar-label">Monday</div></div>
+            <div class="bar-item"><span class="bar-value">68</span><div class="bar" style="--value:68"></div><div class="bar-label">Tuesday</div></div>
+            <div class="bar-item"><span class="bar-value">84</span><div class="bar" style="--value:84"></div><div class="bar-label">Wednesday</div></div>
+            <div class="bar-item"><span class="bar-value">96</span><div class="bar" style="--value:96"></div><div class="bar-label">Thursday</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="closing frame" aria-labelledby="closing-title">
+      <span class="tilt-shape closing-star" aria-hidden="true"></span>
+      <div class="shell closing-inner">
+        <div><p class="label-pill">YOUR NEXT MOVE</p><h2 id="closing-title">Build the workbench your team needs.</h2></div>
+        <button class="closing-button js-open-modal" type="button">Ready to move from prompt to progress?</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell footer-row"><span>NOVA AI Workbench</span><span>Research · Create · Automate</span></div>
+  </footer>
+
+  <div class="modal" id="start-modal" hidden>
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-description">
+      <div class="modal-top">
+        <h2 id="modal-title">Start with NOVA.</h2>
+        <button class="modal-close" type="button" aria-label="Close dialog">×</button>
+      </div>
+      <p id="modal-description">Your focused AI workspace is ready for research, creation, and automation.</p>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      const menuButton = document.querySelector('.menu-toggle');
+      const mobileNav = document.querySelector('.mobile-nav');
+      const filterButtons = [...document.querySelectorAll('.filter-button')];
+      const cards = [...document.querySelectorAll('.feature-card')];
+      const modal = document.querySelector('#start-modal');
+      const closeButton = modal.querySelector('.modal-close');
+      const openButtons = [...document.querySelectorAll('.js-open-modal')];
+      let modalTrigger = null;
+
+      menuButton.addEventListener('click', () => {
+        const isOpen = menuButton.getAttribute('aria-expanded') === 'true';
+        menuButton.setAttribute('aria-expanded', String(!isOpen));
+        mobileNav.dataset.open = String(!isOpen);
+        menuButton.textContent = isOpen ? 'Menu' : 'Close';
+      });
+
+      mobileNav.addEventListener('click', (event) => {
+        if (event.target.matches('a')) {
+          menuButton.setAttribute('aria-expanded', 'false');
+          mobileNav.dataset.open = 'false';
+          menuButton.textContent = 'Menu';
+        }
+      });
+
+      filterButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const filter = button.dataset.filter;
+          filterButtons.forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
+          cards.forEach((card) => {
+            card.hidden = filter !== 'All' && card.dataset.category !== filter;
+          });
+        });
+      });
+
+      function openModal(event) {
+        modalTrigger = event.currentTarget;
+        modal.hidden = false;
+        document.body.classList.add('modal-open');
+        closeButton.focus();
+      }
+
+      function closeModal() {
+        modal.hidden = true;
+        document.body.classList.remove('modal-open');
+        if (modalTrigger) modalTrigger.focus();
+      }
+
+      openButtons.forEach((button) => button.addEventListener('click', openModal));
+      closeButton.addEventListener('click', closeModal);
+      modal.addEventListener('click', (event) => {
+        if (event.target === modal) closeModal();
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !modal.hidden) closeModal();
+        if (event.key === 'Tab' && !modal.hidden) {
+          event.preventDefault();
+          closeButton.focus();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

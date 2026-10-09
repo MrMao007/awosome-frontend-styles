@@ -6,7 +6,32 @@ It works with common coding agents that support `SKILL.md`, including Claude Cod
 
 The skill treats every style as a design system rather than a mood board: exact palettes, typography roles, borders, shadows, geometry, composition patterns, and explicit anti-patterns are preserved during implementation.
 
-![Capsule style example](examples/capsule-smoke.png)
+## Style gallery
+
+Each preview links to a live HTML example hosted on GitHub Pages.
+
+<table>
+  <tr>
+    <td width="50%"><a href="https://mrmao007.github.io/awosome-frontend-styles/examples/biennale-yellow.html"><img src="examples/biennale-yellow.png" alt="Biennale Yellow example"></a><br><strong>Biennale Yellow</strong></td>
+    <td width="50%"><a href="https://mrmao007.github.io/awosome-frontend-styles/examples/blockframe.html"><img src="examples/blockframe.png" alt="BlockFrame example"></a><br><strong>BlockFrame</strong></td>
+  </tr>
+  <tr>
+    <td><a href="https://mrmao007.github.io/awosome-frontend-styles/examples/blue-professional.html"><img src="examples/blue-professional.png" alt="Blue Professional example"></a><br><strong>Blue Professional</strong></td>
+    <td><a href="https://mrmao007.github.io/awosome-frontend-styles/examples/bold-poster.html"><img src="examples/bold-poster.png" alt="Bold Poster example"></a><br><strong>Bold Poster</strong></td>
+  </tr>
+  <tr>
+    <td><a href="https://mrmao007.github.io/awosome-frontend-styles/examples/broadside.html"><img src="examples/broadside.png" alt="Broadside example"></a><br><strong>Broadside</strong></td>
+    <td><a href="https://mrmao007.github.io/awosome-frontend-styles/examples/capsule.html"><img src="examples/capsule.png" alt="Capsule example"></a><br><strong>Capsule</strong></td>
+  </tr>
+  <tr>
+    <td><a href="https://mrmao007.github.io/awosome-frontend-styles/examples/cartesian.html"><img src="examples/cartesian.png" alt="Cartesian example"></a><br><strong>Cartesian</strong></td>
+    <td><a href="https://mrmao007.github.io/awosome-frontend-styles/examples/cobalt-grid.html"><img src="examples/cobalt-grid.png" alt="Cobalt Grid example"></a><br><strong>Cobalt Grid</strong></td>
+  </tr>
+  <tr>
+    <td><a href="https://mrmao007.github.io/awosome-frontend-styles/examples/coral.html"><img src="examples/coral.png" alt="Coral example"></a><br><strong>Coral</strong></td>
+    <td><a href="https://mrmao007.github.io/awosome-frontend-styles/examples/creative-mode.html"><img src="examples/creative-mode.png" alt="Creative Mode example"></a><br><strong>Creative Mode</strong></td>
+  </tr>
+</table>
 
 ## Included styles
 
@@ -121,8 +146,16 @@ Create a Coral landing page, borrowing only Cobalt Grid's pixel-stack chart atom
 │   ├── STYLE_INDEX.md
 │   └── *-design-spec.md
 ├── examples/
-│   ├── capsule-smoke.html
-│   └── capsule-smoke.png
+│   ├── biennale-yellow.html / .png
+│   ├── blockframe.html / .png
+│   ├── blue-professional.html / .png
+│   ├── bold-poster.html / .png
+│   ├── broadside.html / .png
+│   ├── capsule.html / .png
+│   ├── cartesian.html / .png
+│   ├── cobalt-grid.html / .png
+│   ├── coral.html / .png
+│   └── creative-mode.html / .png
 ├── CONTRIBUTING.md
 ├── LICENSE
 └── NOTICE.md
