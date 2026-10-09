@@ -36,13 +36,13 @@ The skill treats every style as a design system rather than a mood board: exact 
 Clone the repository into the QoderWork skills directory:
 
 ```bash
-git clone https://github.com/<your-github-username>/awosome-frontend-styles.git ~/.qoderwork/skills/frontend-design-styles
+git clone https://github.com/MrMao007/awosome-frontend-styles.git ~/.qoderwork/skills/frontend-design-styles
 ```
 
 Alternatively, clone it elsewhere and copy the skill directory:
 
 ```bash
-git clone https://github.com/<your-github-username>/awosome-frontend-styles.git
+git clone https://github.com/MrMao007/awosome-frontend-styles.git
 cp -R awosome-frontend-styles ~/.qoderwork/skills/frontend-design-styles
 ```
 
