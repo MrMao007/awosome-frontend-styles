@@ -31,6 +31,8 @@ for (const s of styles) {
   if (/data:font\/|data:application\/|base64/.test(html)) issues.push('Bundled binary in example: ' + s.id);
   if (/\/Users\/|file:\/\//.test(spec + html)) issues.push('Local absolute path in preset: ' + s.id);
   if (!/<html\b/.test(html) || !/<body[\s>]/.test(html)) issues.push('Invalid HTML example: ' + s.id);
+  if (!/<html\b[^>]*\blang=["']en(?:-[A-Za-z]+)?["']/.test(html)) issues.push('Example must declare English language: ' + s.id);
+  if (/[\u3400-\u9fff]/u.test(html)) issues.push('Untranslated Chinese in public example: ' + s.id);
   if (s.kind === 'product-inspired') {
     for (const heading of ['## Reusable Style Contract', '### Signature Atoms', '### Do', "### Don't", '### Implementation Tokens']) {
       if (!spec.includes(heading)) issues.push('Missing ' + heading + ': ' + s.id);

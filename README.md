@@ -10,7 +10,7 @@ The skill treats every style as a design system rather than a mood board: exact 
 
 [Browse the searchable live gallery](https://mrmao007.github.io/awosome-frontend-styles/) · [Full style selection matrix](references/STYLE_INDEX.md) · [Machine-readable catalogue](styles.json)
 
-Choose a named system such as Capsule or a product-inspired look such as Notion, Anthropic, Cursor, Vercel, Stripe or Apple. The 100 new examples keep the same fictional NOVA brand, Chinese copy, data and interactions so the visual differences are easy to compare. The skill generates new pages in the user's requested language; Chinese is only the comparison-demo language.
+Choose a named system such as Capsule or a product-inspired look such as Notion, Anthropic, Cursor, Vercel, Stripe or Apple. All 110 published example pages are in English. The 100 product-inspired examples share the same fictional NOVA brand, English copy, data and interactions so the visual differences are easy to compare. The skill still generates new pages in the user's requested language.
 
 ## Ten foundational styles
 

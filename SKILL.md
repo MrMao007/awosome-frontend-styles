@@ -14,6 +14,8 @@ Generate production-ready HTML or React interfaces using one of 110 bundled desi
 
 Use a display name or ID. Foundational styles are Creative Mode, BlockFrame, Biennale Yellow, Blue Professional, Bold Poster, Broadside, Capsule, Cartesian, Cobalt Grid and Coral. Product presets include Notion, Figma, Anthropic, Cursor, Vercel, Stripe, Apple and 93 more, grouped in the index. Categories are reference industries, not restrictions on use.
 
+All bundled public examples use English. Keep GitHub showcase pages, metadata, accessibility labels and preview screenshots in English when maintaining this package. This does not override the user's requested language for newly generated work.
+
 ## Workflow
 
 1. Determine the output target.
